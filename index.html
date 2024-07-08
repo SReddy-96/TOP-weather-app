@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Weather App</title>
+  </head>
+  <body>
+    <header>
+      <form>
+        <input type="search" name="search" id="search" />
+      </form>
+      <h1>Weather App</h1>
+      <div id="temp_wrapper">
+        <div class="temp_switch">&#176;C</div>
+        <div class="temp_switch">&#176;F</div>
+      </div>
+    </header>
+    <div id="container">
+      <div id="today_weather">
+        <img src="#" alt="#" id="today_icon" />
+        <div id="today_temp_c" class="cel"></div>
+        <div id="today_temp_f" class="far"></div>
+        <div id="today_stats">
+          <p id="today_precip"></p>
+          <p id="today_humidity"></p>
+          <p id="today_uv"></p>
+        </div>
+        <div id="hourly_week_buttons">
+          <button id="hourly_button">Hourly</button>
+          <button id="week_button">Week</button>
+        </div>
+      </div>
+      <div id="today_description">
+        <p id="location"></p>
+        <p id="date"></p>
+        <p id="weather_text"></p>
+      </div>
+      <div id="hourly_week"></div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
