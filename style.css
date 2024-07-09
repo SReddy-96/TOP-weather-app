@@ -14,11 +14,12 @@ body {
   -webkit-font-smoothing: antialiased;
   font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  min-height: 100%;
-  background: url("./background-clouds.webp") rgba(0, 0, 0, 0.6);
+  background: url("./background-clouds.webp") rgba(0, 0, 0, 0.5);
   background-size: cover;
   background-position: center;
   background-blend-mode: multiply;
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 img,
@@ -54,28 +55,47 @@ h6 {
 
 /* --- */
 
+/* header */
 header {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   width: 100%;
   height: max-content;
   padding: 1rem;
   border-bottom: 1px solid black;
   background: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
-
-#temp_wrapper {
+#search_form {
   display: flex;
-  align-items: center;
+  width: 30%;
 }
 
-.temp_switch {
-  border: 1px solid black;
-  padding: 0.6rem;
-  text-align: center;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
+#loading_icon {
+  width: 2rem;
+  height: 2rem;
+  display: none;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+}
+
+#search_icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* container */
 #container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,16 +135,32 @@ header {
   align-items: end;
   justify-content: center;
   color: white;
+  text-align: end;
 }
+
+#location {
+  font-size: xx-large;
+}
+
+#date,
+#weather_text {
+  font-size: large;
+}
+
+#carousel_buttons {
+  justify-self: flex-end;
+}
+
 #hourly_week_wrapper {
   grid-column: -1/1;
-  width: 100%;
+  min-width: fit-content;
   overflow: hidden;
   position: relative;
   background-color: #ffffff5e;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
+  padding: 1rem;
 }
 
 #weather_carousel {
@@ -133,6 +169,27 @@ header {
   position: absolute;
   width: 100%;
   transition: ease 0.8s;
+}
+
+#hourly_week_wrapper svg {
+  padding: 0;
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  fill: rgba(0, 0, 0, 0.493);
+  stroke: #ffffff;
+  stroke-width: 0.2px;
+  cursor: pointer;
+}
+
+#carousel_left {
+  left: 0;
+}
+
+#carousel_right {
+  right: 0;
 }
 
 .weather_carousel_box {
@@ -145,9 +202,84 @@ header {
   border: none;
 }
 
-.cel {
-  display: block;
-}
-.far {
+.hide {
   display: none;
+}
+
+/* toggle temp */
+
+.toggleContainer {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: fit-content;
+  border: 3px solid #343434;
+  border-radius: 20px;
+  background: #343434;
+  font-weight: bold;
+  color: #343434;
+  cursor: pointer;
+}
+.toggleContainer::before {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  left: 0%;
+  border-radius: 20px;
+  background: white;
+  transition: all 0.3s;
+}
+.toggleCheckbox:checked + .toggleContainer::before {
+  left: 50%;
+}
+.toggleContainer div {
+  padding: 0.7rem;
+  text-align: center;
+  z-index: 1;
+}
+.toggleCheckbox {
+  display: none;
+}
+.toggleCheckbox:checked + .toggleContainer div:first-child {
+  color: white;
+  transition: color 0.3s;
+}
+.toggleCheckbox:checked + .toggleContainer div:last-child {
+  color: #343434;
+  transition: color 0.3s;
+}
+.toggleCheckbox + .toggleContainer div:first-child {
+  color: #343434;
+  transition: color 0.3s;
+}
+.toggleCheckbox + .toggleContainer div:last-child {
+  color: white;
+  transition: color 0.3s;
+}
+
+@media screen and (width <= 800px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  header div + form + h1 {
+    margin-bottom: 0.5rem;
+  }
+  #search_form {
+    width: auto;
+  }
+  #container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    padding: 3rem;
+  }
+
+  #today_description {
+    grid-row: 1/2;
+    align-items: center;
+    word-break: auto-phrase;
+    text-align: center;
+  }
 }

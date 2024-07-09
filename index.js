@@ -1,17 +1,28 @@
 document.addEventListener("DOMContentLoaded", async function () {
-  const forecast = await getWeather("Daejeon");
   const weatherContainer = document.getElementById("weather_carousel");
+  const container = document.getElementById("container");
 
   // buttons
   const moveRightButton = document.getElementById("carousel_right");
   const moveLeftButton = document.getElementById("carousel_left");
+  const hourly_button = document.getElementById("hourly_button");
+  const week_button = document.getElementById("week_button");
+  const toggle = document.getElementById("toggle");
 
-  
+  const search_form = document.getElementById("search_form");
+
+  // loading icon
+  const loading_icon = document.getElementById("loading_icon");
+  loading_icon.style.display = "block";
+
+  // initial load
+  const forecast = await getWeather("Daejeon");
   fillToday(forecast);
   fillDescription(forecast);
-  const forecastWidth = weatherForecast(forecast, "week");
+  let forecastWidth = weatherForecast(forecast, "week");
+  loading_icon.style.display = "none";
 
-// carousel movement
+  // carousel movement
   let containerWidth = 0;
 
   moveRightButton.addEventListener("click", function () {
@@ -33,22 +44,57 @@ document.addEventListener("DOMContentLoaded", async function () {
     );
     containerWidth = moveLeftReturn;
   });
-  
-  // toggle hourly or week
 
-  
+  // toggle hourly or week
+  hourly_button.addEventListener("click", function () {
+    return (forecastWidth = weatherForecast(forecast, "hourly"));
+  });
+
+  week_button.addEventListener("click", function () {
+    return (forecastWidth = weatherForecast(forecast, "week"));
+  });
+
+  // search form
+  search_form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // loading screen
+    const loading_icon = document.getElementById("loading_icon");
+    loading_icon.style.display = "block";
+
+    // data filling
+    const search = document.getElementById("search").value;
+    const search_forecast = await getWeather(search);
+    container.InnerHTML = "";
+    fillToday(search_forecast);
+    fillDescription(search_forecast);
+    forecastWidth = weatherForecast(search_forecast, "week");
+    loading_icon.style.display = "none";
+    this.reset();
+  });
+
+  //change C / F
+  toggle.addEventListener("click", function () {
+    const all_temps = document.querySelectorAll(".temp");
+    all_temps.forEach((temp) => {
+      temp.classList.toggle("hide");
+    });
+  });
 });
 
 // get weather JSON
 async function getWeather(input) {
   try {
     const response = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=de4f2983b500413781f04557240807&q=${input}&days=7&aqi=no&alerts=no`,
+      `https://api.weatherapi.com/v1/forecast.json?key=de4f2983b500413781f04557240807&q=${input}&days=10&aqi=no&alerts=no`,
       {
         mode: "cors",
       }
     );
     if (!response.ok) {
+      // stop spinning icon
+      const loading_icon = document.getElementById("loading_icon");
+      loading_icon.style.display = "none";
       return alert("Location does not exist, Try Again");
     }
     const forecast = await response.json();
@@ -80,7 +126,7 @@ function fillDescription(forecast) {
   const date = document.getElementById("date");
   const weather_text = document.getElementById("weather_text");
 
-  location.innerHTML = `<b>${forecast.location.name}, ${forecast.location.country}</b>`;
+  location.innerHTML = `<b>${forecast.location.name},<br> ${forecast.location.country}</b>`;
   date.textContent = `${forecast.location.localtime}`;
   weather_text.textContent = `${forecast.current.condition.text}`;
 }
@@ -88,11 +134,14 @@ function fillDescription(forecast) {
 // change date to day name
 function getDayName(dateStr) {
   var date = new Date(dateStr);
-  return date.toLocaleDateString('en-GB', { weekday: "short" });
+  return date.toLocaleDateString("en-GB", { weekday: "short" });
 }
 
 function weatherForecast(forecast, checker) {
   const weather_carousel = document.getElementById("weather_carousel");
+
+  // reset
+  weather_carousel.innerHTML = "";
 
   let width_count = 0;
   if (checker === "hourly") {
@@ -116,10 +165,10 @@ function weatherForecast(forecast, checker) {
         low_temp_c.textContent = `${hour.feelslike_c}ºC`;
         low_temp_f.textContent = `${hour.feelslike_f}ºF`;
 
-        high_temp_c.classList.add("cel");
-        high_temp_f.classList.add("far");
-        low_temp_c.classList.add("cel");
-        low_temp_f.classList.add("far");
+        high_temp_c.classList.add("temp");
+        high_temp_f.classList.add("temp", "hide");
+        low_temp_c.classList.add("temp");
+        low_temp_f.classList.add("temp", "hide");
         temp_wrapper.append(high_temp_c, high_temp_f, low_temp_c, low_temp_f);
 
         wrapper.classList.add("weather_carousel_box");
@@ -140,7 +189,7 @@ function weatherForecast(forecast, checker) {
       const low_temp_c = document.createElement("p");
       const high_temp_f = document.createElement("p");
       const low_temp_f = document.createElement("p");
-      
+
       title.textContent = getDayName(day.date);
       icon.src = day.day.condition.icon;
       high_temp_c.textContent = `${day.day.maxtemp_c}ºC`;
@@ -148,10 +197,10 @@ function weatherForecast(forecast, checker) {
       low_temp_c.textContent = `${day.day.mintemp_c}ºC`;
       low_temp_f.textContent = `${day.day.mintemp_f}ºF`;
 
-      high_temp_c.classList.add("cel");
-      high_temp_f.classList.add("far");
-      low_temp_c.classList.add("cel");
-      low_temp_f.classList.add("far");
+      high_temp_c.classList.add("temp");
+      high_temp_f.classList.add("temp", "hide");
+      low_temp_c.classList.add("temp");
+      low_temp_f.classList.add("temp", "hide");
       temp_wrapper.append(high_temp_c, high_temp_f, low_temp_c, low_temp_f);
 
       wrapper.classList.add("weather_carousel_box");
@@ -159,7 +208,7 @@ function weatherForecast(forecast, checker) {
 
       weather_carousel.append(wrapper);
       width_count++;
-    })
+    });
   } else {
     console.error("checker was not added to function.");
   }
