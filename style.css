@@ -15,6 +15,10 @@ body {
   font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   min-height: 100%;
+  background: url("./background-clouds.webp") rgba(0, 0, 0, 0.6);
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: multiply;
 }
 
 img,
@@ -58,6 +62,7 @@ header {
   height: max-content;
   padding: 1rem;
   border-bottom: 1px solid black;
+  background: white;
 }
 
 #temp_wrapper {
@@ -74,18 +79,22 @@ header {
 #container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 2fr 1fr;
-  gap: 20px;
-  padding: 2rem;
+  grid-template-rows: 1fr 1fr;
+  gap: 2rem;
+  padding: 5rem;
+  height: 100%;
 }
 
 #today_weather {
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-columns: 1fr 1fr 3fr;
   grid-template-rows: 4fr 1fr;
   gap: 10px;
   align-items: center;
   justify-items: center;
+  background-color: #ffffff5e;
+  border-radius: 0.5rem;
+  padding: 1rem;
 }
 
 #today_stats {
@@ -105,10 +114,37 @@ header {
   flex-direction: column;
   align-items: end;
   justify-content: center;
+  color: white;
 }
-#hourly_week {
+#hourly_week_wrapper {
   grid-column: -1/1;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background-color: #ffffff5e;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
 }
+
+#weather_carousel {
+  display: flex;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  transition: ease 0.8s;
+}
+
+.weather_carousel_box {
+  min-width: 100px;
+  border-right: 1px solid grey;
+  padding: 1rem;
+}
+
+.weather_carousel_box:last-of-type {
+  border: none;
+}
+
 .cel {
   display: block;
 }
