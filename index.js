@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   loading_icon.style.display = "block";
 
   // initial load
-  const forecast = await getWeather("Daejeon");
+  let forecast = await getWeather("Daejeon");
   fillToday(forecast);
   fillDescription(forecast);
   let forecastWidth = weatherForecast(forecast, "week");
@@ -47,10 +47,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // toggle hourly or week
   hourly_button.addEventListener("click", function () {
+    containerWidth = 0;
+    weatherContainer.style.right = '0px';
     return (forecastWidth = weatherForecast(forecast, "hourly"));
   });
 
   week_button.addEventListener("click", function () {
+    containerWidth = 0;
+    weatherContainer.style.right = '0px';
     return (forecastWidth = weatherForecast(forecast, "week"));
   });
 
@@ -64,12 +68,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // data filling
     const search = document.getElementById("search").value;
-    const search_forecast = await getWeather(search);
-    container.InnerHTML = "";
-    fillToday(search_forecast);
-    fillDescription(search_forecast);
-    forecastWidth = weatherForecast(search_forecast, "week");
+    forecast = await getWeather(search);
+    fillToday(forecast);
+    fillDescription(forecast);
+    forecastWidth = weatherForecast(forecast, "week");
     loading_icon.style.display = "none";
+
+    // reset carousel
+    containerWidth = 0;
+    weatherContainer.style.right = '0px';
+    
     this.reset();
   });
 
@@ -116,9 +124,9 @@ function fillToday(forecast) {
   icon.src = forecast.current.condition.icon;
   temp_c.innerHTML = `<b>${forecast.current.temp_c}ºC</b>`;
   temp_f.innerHTML = `<b>${forecast.current.temp_f}ºF</b>`;
-  precip.textContent = `Precipitation: ${forecast.current.precip_mm}mm`;
-  humidity.textContent = `Humidity: ${forecast.current.humidity}%`;
-  uv.textContent = `UV: ${forecast.current.uv}`;
+  precip.innerHTML = `<b>Precipitation:</b> ${forecast.current.precip_mm}mm`;
+  humidity.innerHTML = `<b>Humidity: </b>${forecast.current.humidity}%`;
+  uv.innerHTML = `<b>UV:</b> ${forecast.current.uv}`;
 }
 
 function fillDescription(forecast) {
@@ -146,9 +154,10 @@ function weatherForecast(forecast, checker) {
   let width_count = 0;
   if (checker === "hourly") {
     const hours = forecast.forecast.forecastday[0].hour;
+    const currentLocalTime = new Date(forecast.location.localtime);
     hours.map((hour) => {
       const dateTime = new Date(hour.time);
-      if (dateTime.getTime() >= new Date().getTime()) {
+      if (dateTime.getTime() >= currentLocalTime.getTime()) {
         const wrapper = document.createElement("div");
         const title = document.createElement("h4");
         const icon = document.createElement("img");
